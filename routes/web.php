@@ -18,3 +18,5 @@ Route::get('/', function () {
     return view('welcome');
 });
 Route::get('/v1/access/token', [mpesaController::class, 'generateAccessToken']);
+Route::post('/v1/stkpush', [mpesaController::class, 'stkPush']);
+Route::get('/pay', [mpesaController::class, 'pay']);
