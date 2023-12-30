@@ -14,29 +14,38 @@ class mpesaController extends Controller
 
         $consumerSecret = 'pTgyun2lPXRADwyy';
 
-        $credentials = base64_encode($consumerKey . ':' . $consumerSecret);
+        $credentials = $consumerKey . ':' . $consumerSecret;
 
 
         $url = 'https://sandbox.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials';
 
-        $curl = curl_init();
+        $headers = ['Content-Type:application/json; charset=utf8'];
 
-        curl_setopt($curl, CURLOPT_URL, $url);
+        $curl = curl_init($url);
 
 
-        curl_setopt($curl, CURLOPT_HTTPHEADER, array('Authorization: Basic' . $credentials));
-
-        curl_setopt($curl, CURLOPT_HEADER, false);
-
-        curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
 
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
 
-        $curl_response = curl_exec($curl);
+        curl_setopt($curl, CURLOPT_HEADER, false);
 
-        $access_token = json_decode($curl_response);
+        curl_setopt($curl, CURLOPT_USERPWD, $credentials);
 
-        return $access_token->access_token;
+
+        $result = curl_exec($curl);
+
+        $status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+
+        curl_close($curl);
+
+        $result = json_decode($result);
+
+        return $result->access_token;
+
+        // $result = json_decode($curl_response);
+
+        // return $access_token->access_token;
     }
 
     public function stkPush()
