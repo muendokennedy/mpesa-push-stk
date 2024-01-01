@@ -9,6 +9,25 @@ use Carbon\Carbon;
 class mpesaController extends Controller
 {
 
+    public function getAccessToken()
+    {
+        $url = env('MPESA_ENV') === 0 ? '' : '';
+
+        $curl = curl_init($url);
+
+        curl_setopt_array($curl,
+            array(
+
+            )
+        );
+
+        $response = json_decode(curl_exec($curl));
+
+        curl_close($curl);
+
+        return $response;
+    }
+
     // Generate the access token
     public function generateAccessToken()
     {
