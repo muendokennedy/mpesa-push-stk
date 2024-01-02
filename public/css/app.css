@@ -41,6 +41,12 @@ body{
     background: #fff;
     border-radius: 0 0 .8rem .8rem;
 }
+.card-body p{
+    padding-bottom: 2rem;
+}
+.card-body span{
+    color: red;
+}
 .btn{
     margin: 2rem 0;
     font-size: 1.4rem;

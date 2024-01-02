@@ -14,6 +14,7 @@
                 <div class="card-header">Obtain Access Token</div>
                 <div class="card-body">
                     <button id="get-access-token" class="btn">Request Access Token</button>
+                    <p>Access Token is: <span id="access-token"></span> </p>
                 </div>
             </div>
             <div class="card">
@@ -55,7 +56,7 @@
             xhrHttp.onreadystatechange = function () {
                 if(xhrHttp.readyState === 4 && xhrHttp.status === 200){
                     let response = JSON.parse(xhrHttp.responseText);
-                    console.log(xhrHttp.responseText);
+                    document.getElementById('access-token').textContent = response.access_token;
                 } else if(xhrHttp.readyState === 4){
                     console.log('There was an error in making the request');
                 }
@@ -63,7 +64,6 @@
 
             xhrHttp.send();
 
-            console.log('The code above was executed');
         });
     </script>
 </body>

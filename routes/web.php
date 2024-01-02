@@ -19,4 +19,4 @@ use App\Http\Controllers\payments\mpesaController;
 // Route::post('/v1/stkpush', [mpesaController::class, 'stkPush']);
 Route::get('/pay', [mpesaController::class, 'pay']);
 // Route::get('/query/transaction', [mpesaController::class, 'query']);
-Route::post('/get-token', [mpesaController::class,'']);
+Route::post('/get-token', [mpesaController::class,'getAccessToken']);
