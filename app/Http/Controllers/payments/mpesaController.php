@@ -35,6 +35,16 @@ class mpesaController extends Controller
         return $response->access_token;
     }
 
+    public function registerURL()
+    {
+        $body = array(
+            'Shortcode' => env('MPESA_SHORTCODE'),
+            'ResponseType' => 'Completed',
+            'ConfirmationURL' => env('MPESA_TEST_URL') . '/api/confirmation',
+            'ValidationURL' => env('MPESA_TEST_URL') . '/api/validation'
+        );
+    }
+
     private function makeHttp($url, $body)
     {
         $curl = curl_init();
