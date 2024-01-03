@@ -38,11 +38,37 @@ class mpesaController extends Controller
     public function registerURL()
     {
         $body = array(
-            'Shortcode' => env('MPESA_SHORTCODE'),
+            'ShortCode' => env('MPESA_SHORTCODE'),
             'ResponseType' => 'Completed',
             'ConfirmationURL' => env('MPESA_TEST_URL') . '/api/confirmation',
             'ValidationURL' => env('MPESA_TEST_URL') . '/api/validation'
         );
+
+        $url = env('MPESA_ENV') == 0
+
+        ? 'https://sandbox.safaricom.co.ke/mpesa/c2b/v1/registerurl'
+
+        : 'https://api.safaricom.co.ke/mpesa/c2b/v1/registerurl';
+
+        return $this->makeHttp($url, $body);
+    }
+
+    public function simulateTransaction(Request $request)
+    {
+        $response = array(
+            'Msisdn' => '',
+            'Amount' => $request->amount,
+            'BillRefNumber' => $request->account,
+            'CommandID' => 'CustomerPayBillOnline'
+        );
+
+        $url = env('MPESA_ENV') == 0
+
+        ? 'https://sandbox.safaricom.co.ke/mpesa/c2b/v1/simulate'
+
+        : 'https://api.safaricom.co.ke/mpesa/c2b/v1/simulate';
+
+        return $this->makeHttp($url, $response);
     }
 
     private function makeHttp($url, $body)

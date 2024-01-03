@@ -20,3 +20,5 @@ use App\Http\Controllers\payments\mpesaController;
 Route::get('/pay', [mpesaController::class, 'pay']);
 // Route::get('/query/transaction', [mpesaController::class, 'query']);
 Route::post('/get-token', [mpesaController::class,'getAccessToken']);
+Route::post('/register-urls', [mpesaController::class,'registerURL']);
+Route::post('/simulate-transaction', [mpesaController::class,'simulateTransaction']);
