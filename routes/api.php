@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\payments\mpesaController;
+use App\Http\Controllers\payments\mpesaResponsesController;
 
 /*
 |--------------------------------------------------------------------------
@@ -15,10 +16,10 @@ use App\Http\Controllers\payments\mpesaController;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
+// Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+//     return $request->user();
+// });
 
 // Create some api routes for the confirmation and the validation URLs
-Route::post('validation', [mpesaController::class,'validation']);
-Route::post('confirmation', [mpesaController::class,'confirmation']);
+Route::post('validation', [mpesaResponsesController::class,'validation']);
+Route::post('confirmation', [mpesaResponsesController::class,'confirmation']);

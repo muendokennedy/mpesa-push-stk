@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers\payments;
 
-use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use Carbon\Carbon;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use App\Http\Controllers\Controller;
 
 class mpesaController extends Controller
 {
@@ -37,6 +38,7 @@ class mpesaController extends Controller
 
     public function registerURL()
     {
+        Log::info('The log is working from my application');
         $body = array(
             'ShortCode' => env('MPESA_SHORTCODE'),
             'ResponseType' => 'Completed',
@@ -55,10 +57,15 @@ class mpesaController extends Controller
 
     public function simulateTransaction(Request $request)
     {
+        $jsonData = $request->getContent();
+
+        $transactionData = json_decode($jsonData, true);
+
         $response = array(
-            'Msisdn' => '',
-            'Amount' => $request->amount,
-            'BillRefNumber' => $request->account,
+            'ShortCode' => env('MPESA_SHORTCODE'),
+            'Msisdn' => '254708374149',
+            'Amount' => $transactionData['amount'],
+            'BillRefNumber' => $transactionData['account'],
             'CommandID' => 'CustomerPayBillOnline'
         );
 

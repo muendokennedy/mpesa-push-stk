@@ -83,7 +83,11 @@
             xhrHttp.onreadystatechange = function(){
                 if(xhrHttp.readyState === 4 && xhrHttp.status === 200){
                     let response = JSON.parse(xhrHttp.responseText);
-                    document.getElementById('urls-register').textContent = response.ResponseDescription;
+                    if(response.ResponseCode == '0'){
+                        document.getElementById('urls-register').textContent = response.ResponseDescription;
+                    } else if(response.errorMessage){
+                        document.getElementById('urls-register').textContent = response.errorMessage;
+                    }
                     console.log(response);
                 } else {
                     console.log('There was an error while making the request');
@@ -104,8 +108,8 @@
             const xhrHttp = new XMLHttpRequest();
 
             const requestBody = {
-                  amount: document.getElementById('amount').value(),
-                  account: document.getElementById('account').value()
+                  amount: document.getElementById('amount').value,
+                  account: document.getElementById('account').value
             };
 
             xhrHttp.open('post', '/simulate-transaction', true);

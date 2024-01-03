@@ -10,10 +10,23 @@ class mpesaResponsesController extends Controller
 {
     //Log the validation information to confirm that the validation endpoint has been hit
 
-    public function validatation(Request $request)
+    public function validation(Request $request)
     {
         Log::info('The validation endopoint has been hit');
         Log::info($request->all());
+
+        // This is return when you want to validate the transaction
+        return [
+            'ResultCode' => '0',
+            'ResultDesc' => 'Accepted'
+        ];
+
+        // This is returned when you want to invalidate the transaction
+
+        // [
+        //     'ResultCode' => 'C2B00011',
+        //     'ResultDesc' => 'Rejected'
+        // ];
     }
     public function confirmation(Request $request)
     {

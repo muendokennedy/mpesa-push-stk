@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\payments\mpesaController;
+use App\Http\Controllers\payments\mpesaResponsesController;
 
 /*
 |--------------------------------------------------------------------------
