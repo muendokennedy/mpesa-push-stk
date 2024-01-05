@@ -21,5 +21,4 @@ use App\Http\Controllers\payments\mpesaResponsesController;
 // });
 
 // Create some api routes for the confirmation and the validation URLs
-Route::post('validation', [mpesaResponsesController::class,'validation']);
-Route::post('confirmation', [mpesaResponsesController::class,'confirmation']);
+

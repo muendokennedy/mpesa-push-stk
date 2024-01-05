@@ -23,3 +23,19 @@ Route::get('/pay', [mpesaController::class, 'pay']);
 Route::post('/get-token', [mpesaController::class,'getAccessToken']);
 Route::post('/register-urls', [mpesaController::class,'registerURL']);
 Route::post('/simulate-transaction', [mpesaController::class,'simulateTransaction']);
+Route::post('/simulate-b2c', [mpesaController::class,'b2cRequest']);
+
+Route::get('/b2c/request/pay', function(){
+    return view('b2c');
+});
+Route::get('/b2c/push/stk', function(){
+    return view('stk');
+});
+
+
+
+
+Route::post('/mobilemoney-payment-gateway/b2cresult', [mpesaResponsesController::class,'b2cCallback']);
+Route::post('/mobilemoney-payment-gateway/validation', [mpesaResponsesController::class,'validation']);
+Route::post('/mobilemoney-payment-gateway/confirmation', [mpesaResponsesController::class,'confirmation']);
+

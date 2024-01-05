@@ -33,4 +33,9 @@ class mpesaResponsesController extends Controller
         Log::info('The confirmation endopoint has been hit');
         Log::info($request->all());
     }
+    public function b2cCallback(Request $request)
+    {
+        Log::info('The confirmation endopoint has been hit');
+        Log::info($request->all());
+    }
 }

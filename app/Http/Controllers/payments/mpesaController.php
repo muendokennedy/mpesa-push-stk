@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\payments;
 
 use Carbon\Carbon;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
@@ -40,10 +41,10 @@ class mpesaController extends Controller
     {
         Log::info('The log is working from my application');
         $body = array(
-            'ShortCode' => env('MPESA_SHORTCODE'),
+            'ShortCode' => 600992,
             'ResponseType' => 'Completed',
-            'ConfirmationURL' => env('MPESA_TEST_URL') . '/api/confirmation',
-            'ValidationURL' => env('MPESA_TEST_URL') . '/api/validation'
+            'ConfirmationURL' => env('MPESA_TEST_URL') . '/mobilemoney-payment-gateway/confirmation',
+            'ValidationURL' => env('MPESA_TEST_URL') . '/mobilemoney-payment-gateway/validation'
         );
 
         $url = env('MPESA_ENV') == 0
@@ -63,7 +64,7 @@ class mpesaController extends Controller
 
         $response = array(
             'ShortCode' => env('MPESA_SHORTCODE'),
-            'Msisdn' => '254708374149',
+            'Msisdn' => env('MPESA_TEST_MISDN'),
             'Amount' => $transactionData['amount'],
             'BillRefNumber' => $transactionData['account'],
             'CommandID' => 'CustomerPayBillOnline'
@@ -76,6 +77,79 @@ class mpesaController extends Controller
         : 'https://api.safaricom.co.ke/mpesa/c2b/v1/simulate';
 
         return $this->makeHttp($url, $response);
+    }
+
+    public function b2cRequest(Request $request)
+    {
+        $jsonData = $request->getContent();
+
+        $transactionData = json_decode($jsonData, true);
+
+        $initiatorPassword = 'Safaricom999!*!';
+
+        $publicKey = '-----BEGIN CERTIFICATE-----
+        MIIGgDCCBWigAwIBAgIKMvrulAAAAARG5DANBgkqhkiG9w0BAQsFADBbMRMwEQYK
+        CZImiZPyLGQBGRYDbmV0MRkwFwYKCZImiZPyLGQBGRYJc2FmYXJpY29tMSkwJwYD
+        VQQDEyBTYWZhcmljb20gSW50ZXJuYWwgSXNzdWluZyBDQSAwMjAeFw0xNDExMTIw
+        NzEyNDVaFw0xNjExMTEwNzEyNDVaMHsxCzAJBgNVBAYTAktFMRAwDgYDVQQIEwdO
+        YWlyb2JpMRAwDgYDVQQHEwdOYWlyb2JpMRAwDgYDVQQKEwdOYWlyb2JpMRMwEQYD
+        VQQLEwpUZWNobm9sb2d5MSEwHwYDVQQDExhhcGljcnlwdC5zYWZhcmljb20uY28u
+        a2UwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQCotwV1VxXsd0Q6i2w0
+        ugw+EPvgJfV6PNyB826Ik3L2lPJLFuzNEEJbGaiTdSe6Xitf/PJUP/q8Nv2dupHL
+        BkiBHjpQ6f61He8Zdc9fqKDGBLoNhNpBXxbznzI4Yu6hjBGLnF5Al9zMAxTij6wL
+        GUFswKpizifNbzV+LyIXY4RR2t8lxtqaFKeSx2B8P+eiZbL0wRIDPVC5+s4GdpFf
+        Y3QIqyLxI2bOyCGl8/XlUuIhVXxhc8Uq132xjfsWljbw4oaMobnB2KN79vMUvyoR
+        w8OGpga5VoaSFfVuQjSIf5RwW1hitm/8XJvmNEdeY0uKriYwbR8wfwQ3E0AIW1Fl
+        MMghAgMBAAGjggMkMIIDIDAdBgNVHQ4EFgQUwUfE+NgGndWDN3DyVp+CAiF1Zkgw
+        HwYDVR0jBBgwFoAU6zLUT35gmjqYIGO6DV6+6HlO1SQwggE7BgNVHR8EggEyMIIB
+        LjCCASqgggEmoIIBIoaB1mxkYXA6Ly8vQ049U2FmYXJpY29tJTIwSW50ZXJuYWwl
+        MjBJc3N1aW5nJTIwQ0ElMjAwMixDTj1TVkRUM0lTU0NBMDEsQ049Q0RQLENOPVB1
+        YmxpYyUyMEtleSUyMFNlcnZpY2VzLENOPVNlcnZpY2VzLENOPUNvbmZpZ3VyYXRp
+        b24sREM9c2FmYXJpY29tLERDPW5ldD9jZXJ0aWZpY2F0ZVJldm9jYXRpb25MaXN0
+        P2Jhc2U/b2JqZWN0Q2xhc3M9Y1JMRGlzdHJpYnV0aW9uUG9pbnSGR2h0dHA6Ly9j
+        cmwuc2FmYXJpY29tLmNvLmtlL1NhZmFyaWNvbSUyMEludGVybmFsJTIwSXNzdWlu
+        ZyUyMENBJTIwMDIuY3JsMIIBCQYIKwYBBQUHAQEEgfwwgfkwgckGCCsGAQUFBzAC
+        hoG8bGRhcDovLy9DTj1TYWZhcmljb20lMjBJbnRlcm5hbCUyMElzc3VpbmclMjBD
+        QSUyMDAyLENOPUFJQSxDTj1QdWJsaWMlMjBLZXklMjBTZXJ2aWNlcyxDTj1TZXJ2
+        aWNlcyxDTj1Db25maWd1cmF0aW9uLERDPXNhZmFyaWNvbSxEQz1uZXQ/Y0FDZXJ0
+        aWZpY2F0ZT9iYXNlP29iamVjdENsYXNzPWNlcnRpZmljYXRpb25BdXRob3JpdHkw
+        KwYIKwYBBQUHMAGGH2h0dHA6Ly9jcmwuc2FmYXJpY29tLmNvLmtlL29jc3AwCwYD
+        VR0PBAQDAgWgMD0GCSsGAQQBgjcVBwQwMC4GJisGAQQBgjcVCIfPjFaEwsQDhemF
+        NoTe0Q2GoIgIZ4bBx2yDublrAgFkAgEMMB0GA1UdJQQWMBQGCCsGAQUFBwMCBggr
+        BgEFBQcDATAnBgkrBgEEAYI3FQoEGjAYMAoGCCsGAQUFBwMCMAoGCCsGAQUFBwMB
+        MA0GCSqGSIb3DQEBCwUAA4IBAQBMFKlncYDI06ziR0Z0/reptIJRCMo+rqo/cUuP
+        KMmJCY3sXxFHs5ilNXo8YavgRLpxJxdZMkiUIVuVaBanXkz9/nMriiJJwwcMPjUV
+        9nQqwNUEqrSx29L1ARFdUy7LhN4NV7mEMde3MQybCQgBjjOPcVSVZXnaZIggDYIU
+        w4THLy9rDmUIasC8GDdRcVM8xDOVQD/Pt5qlx/LSbTNe2fekhTLFIGYXJVz2rcsj
+        k1BfG7P3pXnsPAzu199UZnqhEF+y/0/nNpf3ftHZjfX6Ws+dQuLoDN6pIl8qmok9
+        9E/EAgL1zOIzFvCRYlnjKdnsuqL1sIYFBlv3oxo6W1O+X9IZ
+        -----END CERTIFICATE-----';
+
+        // openssl_public_encrypt($initiatorPassword, $encrypted_data, $publicKey, OPENSSL_PKCS1_PADDING);
+
+        // $securityCredential = base64_encode($encrypted_data);
+
+        $curl_post_data = array(
+            'OriginatorConversationID' => Str::uuid(),
+            'InitiatorName' => env('MPESA_B2C_INITIATOR'),
+            'SecurityCredential' => 'cqCvZLdCNJ8ttPepudFJ5k0n8UL0qy51y+tDYUN2plzFxABL7nKzUHmCc42eLoW+27bNPa5luRQdCv7l4lFyiTk4SpDWHUpM+NnynXj4meJI5FbtbF/Ixqqr/9YphABJE5yv5N2Bvzno9zIJAqx+8nEFZQ+/4pqZja/wj86T+FB03dRxGxjG6ztI16nr1TxU/O/9Y3MxtEJ6LaZfw/c5zCcNEY2eIEq4PPMfRFT2mCXgU8HWi/muP+GQ+LYNS4Db7EhYbQINK5m6xkArVArmsXeVf7TLVqtmc27sfmrQ4cXWhUHD7wGK9Iwna97+InE75/cTgxy2ayoe2Eb/df2FhQ==',
+            'CommandID' => 'SalaryPayment',
+            'Amount' => $transactionData['amount'],
+            'PartyA' => env('MPESA_SHORTCODE'),
+            'PartyB' => $transactionData['account'],
+            'Remarks' => $transactionData['remarks'],
+            'ResultURL' => env('MPESA_TEST_URL') . '/mobilemoney-payment-gateway/b2cresult',
+            'QueueTimeOutURL' => env('MPESA_TEST_URL') . '/mobilemoney-payment-gateway/b2ctimeout',
+            'occasion' => $transactionData['occasion']
+        );
+
+        $url = env('MPESA_ENV') == 0
+
+        ? 'https://sandbox.safaricom.co.ke/mpesa/b2c/v3/paymentrequest'
+
+        : 'https://api.safaricom.co.ke/mpesa/b2c/v3/paymentrequest';
+
+        return $this->makeHttp($url, $curl_post_data);
     }
 
     private function makeHttp($url, $body)

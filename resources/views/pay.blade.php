@@ -56,8 +56,9 @@
 
             xhrHttp.onreadystatechange = function () {
                 if(xhrHttp.readyState === 4 && xhrHttp.status === 200){
-                    let response = JSON.parse(xhrHttp.responseText);
-                    document.getElementById('access-token').textContent = response.access_token;
+                    let response = xhrHttp.responseText;
+                    document.getElementById('access-token').textContent = response;
+                    console.log(response);
                 } else if(xhrHttp.readyState === 4){
                     console.log('There was an error in making the request');
                 }
