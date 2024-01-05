@@ -43,8 +43,8 @@ class mpesaController extends Controller
         $body = array(
             'ShortCode' => 600992,
             'ResponseType' => 'Completed',
-            'ConfirmationURL' => env('MPESA_TEST_URL') . '/mobilemoney-payment-gateway/confirmation',
-            'ValidationURL' => env('MPESA_TEST_URL') . '/mobilemoney-payment-gateway/validation'
+            'ConfirmationURL' => 'https://94b8-154-156-115-97.ngrok-free.app/mobilemoney-payment-gateway/confirmation',
+            'ValidationURL' => 'https://94b8-154-156-115-97.ngrok-free.app/mobilemoney-payment-gateway/validation'
         );
 
         $url = env('MPESA_ENV') == 0
@@ -152,6 +152,40 @@ class mpesaController extends Controller
         return $this->makeHttp($url, $curl_post_data);
     }
 
+    public function stkPush(Request $request)
+    {
+        $data = $request->getContent();
+
+        $transactionData = json_decode($data, true);
+
+        $timestamp = date('YmdHis');
+
+        $password = base64_encode(env('MPESA_STK_SHORTCODE') . env('MPESA_PASSKEY') . $timestamp);
+
+        $curl_post_data = array(
+            'BusinessShortCode' => env('MPESA_STK_SHORTCODE'),
+            'Password' => $password,
+            'Timestamp' => $timestamp,
+            'TransactionType' => "CustomerPayBillOnline",
+            'Amount' => $transactionData['amount'],
+            'PartyA' => $transactionData['phone'],
+            'PartyB' => env('MPESA_STK_SHORTCODE'),
+            'PhoneNumber' => $transactionData['phone'],
+            'CallBackURL' => env('MPESA_TEST_URL') . '/mobilemoney-payment-gateway/stk',
+            'AccountReference' => env('MPESA_B2C_INITIATOR'),
+            'TransactionDesc' => "Payment of purchased prouducts"
+        );
+
+        $url = env('MPESA_ENV') == 0
+
+        ? 'https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest'
+
+        : 'https://api.safaricom.co.ke/mpesa/stkpush/v1/processrequest';
+
+        return $this->makeHttp($url, $curl_post_data);
+
+    }
+
     private function makeHttp($url, $body)
     {
         $curl = curl_init();
@@ -215,7 +249,7 @@ class mpesaController extends Controller
         // return $access_token->access_token;
     }
 
-    public function stkPush()
+    public function previousPush()
     {
 
         $url = 'https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest';
