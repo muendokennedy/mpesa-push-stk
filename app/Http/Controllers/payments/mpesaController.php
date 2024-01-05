@@ -43,8 +43,8 @@ class mpesaController extends Controller
         $body = array(
             'ShortCode' => 600992,
             'ResponseType' => 'Completed',
-            'ConfirmationURL' => 'https://94b8-154-156-115-97.ngrok-free.app/mobilemoney-payment-gateway/confirmation',
-            'ValidationURL' => 'https://94b8-154-156-115-97.ngrok-free.app/mobilemoney-payment-gateway/validation'
+            'ConfirmationURL' => env('MPESA_TEST_URL') .'/mobilemoney-payment-gateway/confirmation',
+            'ValidationURL' => env('MPESA_TEST_URL').'/mobilemoney-payment-gateway/validation'
         );
 
         $url = env('MPESA_ENV') == 0
