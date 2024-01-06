@@ -198,10 +198,10 @@ class mpesaController extends Controller
             'CommandID' => "TransactionReversal",
             'TransactionID' => $transactionData['transactionId'],
             'Amount' => $transactionData['amount'],
-            'ReceiverParty' => 600995,
+            'ReceiverParty' => env('MPESA_STK_SHORTCODE'),
             'ReceiverIdentifierType' => 11,
-            'ResultURL' => env('MPESA_TEST_URL') . '/mobilemoney-payment-gateway/Reversal/result/',
-            'QueueTimeOutURL' => env('MPESA_TEST_URL') . '/mobilemoney-payment-gateway/Reversal/queue/',
+            'ResultURL' => env('MPESA_TEST_URL') . '/mobilemoney-payment-gateway/Reversal/result',
+            'QueueTimeOutURL' => env('MPESA_TEST_URL') . '/mobilemoney-payment-gateway/Reversal/queue',
             'Remarks' => 'ReversalRequest',
             'Occassion' => 'ErronousTransaction',
         );

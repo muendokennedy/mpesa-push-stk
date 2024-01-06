@@ -53,4 +53,10 @@ class mpesaResponsesController extends Controller
         Log::info('The stk callback endopoint has been hit');
         Log::info($request->all());
     }
+
+    public function reversalResponseResult(Request $request)
+    {
+        Log::info('The reversal response callack has been hit');
+        Log::info($request->all());
+    }
 }
