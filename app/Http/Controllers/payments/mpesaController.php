@@ -186,6 +186,35 @@ class mpesaController extends Controller
 
     }
 
+    public function reverseTransaction(Request $request)
+    {
+        $data = $request->getContent();
+
+        $transactionData = json_decode($data, true);
+
+        $curl_post_data = array(
+            'Initiator' => env('MPESA_B2C_INITIATOR'),
+            'SecurityCredential' => 'FMoJTf+oz3pml/qxZx3jKeozCkw74+m95aP7M/Q8TR2ii9NB9DmBKQ3lUn7Q7idHdbTKV2AM1PJqB4+uUXTgF8+q3JNiVM0aAqTRXrRi6zptkyamfB4llQBjQ6vroz8lgSPggE73lvvOwfd4zwS35c3PhZTdwHhZzQecq4Dwf/WMxF4SyQZjylBd5M7kox/eScnQ5xe/zfZ8sqbDF0d/oiTH0YhwXV8Nh20G8pn3dyvGeW238tvLnZqhiHOBEvqYtYHLM2UR3yV2VBYgVarjgmM3cAI5ORn0KNV4j4AtGO/MmRp/xKVNLJnw0woT9x9BLqPKi+vc+3rjWwwW/JC41Q==',
+            'CommandID' => "TransactionReversal",
+            'TransactionID' => $transactionData['transactionId'],
+            'Amount' => $transactionData['amount'],
+            'ReceiverParty' => 600995,
+            'ReceiverIdentifierType' => 11,
+            'ResultURL' => env('MPESA_TEST_URL') . '/mobilemoney-payment-gateway/Reversal/result/',
+            'QueueTimeOutURL' => env('MPESA_TEST_URL') . '/mobilemoney-payment-gateway/Reversal/queue/',
+            'Remarks' => 'ReversalRequest',
+            'Occassion' => 'ErronousTransaction',
+        );
+
+        $url = env('MPESA_ENV') == 0
+
+        ? 'https://sandbox.safaricom.co.ke/mpesa/reversal/v1/request'
+
+        : 'https://api.safaricom.co.ke/mpesa/reversal/v1/request';
+
+        return $this->makeHttp($url, $curl_post_data);
+    }
+
     private function makeHttp($url, $body)
     {
         $curl = curl_init();
