@@ -11,12 +11,12 @@ class mpesaResponsesController extends Controller
 {
     //Log the validation information to confirm that the validation endpoint has been hit
 
-    public function validation()
+    public function validation(Request $request)
     {
-        // Log::info('The validation endopoint has been hit');
-        // Log::info($request->all());
+        Log::info('The validation endopoint has been hit');
+        Log::info($request->all());
 
-        // // This is return when you want to validate the transaction
+        // This is return when you want to validate the transaction
         // return [
         //     'ResultCode' => '0',
         //     'ResultDesc' => 'Accepted'
@@ -29,19 +29,19 @@ class mpesaResponsesController extends Controller
         //     'ResultDesc' => 'Rejected'
         // ];
 
-        $data = file_get_contents('php://input');
+        // $data = file_get_contents('php://input');
 
-        Storage::disk('local')->put('validation.txt', $data);
+        // Storage::disk('local')->put('validation.txt', $data);
     }
-    public function confirmation()
+    public function confirmation(Request $request)
     {
 
-        // Log::info('The confirmation endopoint has been hit');
-        // Log::info($request->all());
+        Log::info('The confirmation endopoint has been hit');
+        Log::info($request->all());
 
-        $data = file_get_contents('php://input');
+        // $data = file_get_contents('php://input');
 
-        Storage::disk('local')->put('confirmation.txt', $data);
+        // Storage::disk('local')->put('confirmation.txt', $data);
     }
     public function b2cCallback(Request $request)
     {
@@ -57,6 +57,12 @@ class mpesaResponsesController extends Controller
     public function reversalResponseResult(Request $request)
     {
         Log::info('The reversal response callack has been hit');
+        Log::info($request->all());
+    }
+
+    public function statusResponseResult(Request $request)
+    {
+        Log::info('The status transaction callback has been hit');
         Log::info($request->all());
     }
 }

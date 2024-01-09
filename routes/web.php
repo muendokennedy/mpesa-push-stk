@@ -26,6 +26,7 @@ Route::post('/simulate-transaction', [mpesaController::class,'simulateTransactio
 Route::post('/simulate-b2c', [mpesaController::class,'b2cRequest']);
 Route::post('/simulate-stk', [mpesaController::class,'stkPush']);
 Route::post('/reverse-transaction', [mpesaController::class,'reverseTransaction']);
+Route::post('/transaction-status', [mpesaController::class,'checkTransactionStatus']);
 
 Route::get('/b2c/request/pay', function(){
     return view('b2c');
@@ -36,6 +37,9 @@ Route::get('/b2c/push/stk', function(){
 Route::get('/c2b/reversal', function(){
     return view('reversal');
 });
+Route::get('/c2b/transaction-status', function(){
+    return view('status');
+});
 
 
 
@@ -45,4 +49,5 @@ Route::post('/mobilemoney-payment-gateway/validation', [mpesaResponsesController
 Route::post('/mobilemoney-payment-gateway/confirmation', [mpesaResponsesController::class,'confirmation']);
 Route::post('/mobilemoney-payment-gateway/stk', [mpesaResponsesController::class,'stkResponse']);
 Route::post('/mobilemoney-payment-gateway/Reversal/result', [mpesaResponsesController::class,'reversalResponseResult']);
+Route::post('/mobilemoney-payment-gateway/TransactionStatus/result', [mpesaResponsesController::class,'statusResponseResult']);
 
