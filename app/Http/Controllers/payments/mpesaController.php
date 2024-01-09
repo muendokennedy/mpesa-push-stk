@@ -186,6 +186,18 @@ class mpesaController extends Controller
 
     }
 
+    public function checkTransactionStatus(Request $request)
+    {
+        $data = $request->getContent();
+
+        $transactionData = json_decode($data, true);
+
+        $curl_post_data = array(
+
+            
+        );
+    }
+
     public function reverseTransaction(Request $request)
     {
         $data = $request->getContent();
