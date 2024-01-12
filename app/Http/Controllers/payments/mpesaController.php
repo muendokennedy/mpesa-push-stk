@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\payments;
 
+use App\Models\Stkcallback;
 use Carbon\Carbon;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
@@ -173,7 +174,7 @@ class mpesaController extends Controller
             'PhoneNumber' => $transactionData['phone'],
             'CallBackURL' => env('MPESA_TEST_URL') . '/mobilemoney-payment-gateway/stk',
             'AccountReference' => env('MPESA_B2C_INITIATOR'),
-            'TransactionDesc' => "Payment of purchased prouducts"
+            'TransactionDesc' => 'Payment of purchased prouducts'
         );
 
         $url = env('MPESA_ENV') == 0
@@ -182,7 +183,34 @@ class mpesaController extends Controller
 
         : 'https://api.safaricom.co.ke/mpesa/stkpush/v1/processrequest';
 
-        return $this->makeHttp($url, $curl_post_data);
+        $response = $this->makeHttp($url, $curl_post_data);
+
+        $responseData = json_decode($response);
+
+        $responseCode = $responseData->responseCode;
+
+        if($responseCode == 0) {
+            $MerchantRequestID = $responseData->MerchantRequestID;
+            $CheckoutRequestID = $responseData->CheckoutRequestID;
+            $customeMessage = $responseData->CustomerMessage;
+
+            // Save the responseto the database
+
+            $payment = new Stkcallback;
+
+            $payment->phone = $transactionData['phone'];
+            $payment->amount = $transactionData['amount'];
+            $payment->reference = env('MPESA_B2C_INITIATOR');
+            $payment->description = 'Payment of purchased prouducts';
+            $payment->MerchantRequestID = $MerchantRequestID;
+            $payment->CheckoutRequestID = $CheckoutRequestID;
+            $payment->status = 'Requested';
+            $payment->save();
+
+            return $customeMessage;
+
+        }
+
 
     }
 
@@ -214,7 +242,8 @@ class mpesaController extends Controller
 
         : 'https://api.safaricom.co.ke/mpesa/transactionstatus/v1/query';
 
-        return $this->makeHttp($url, $curl_post_data);
+
+        $this->makeHttp($url, $curl_post_data);
     }
 
     public function reverseTransaction(Request $request)

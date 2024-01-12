@@ -18,8 +18,11 @@ return new class extends Migration
             $table->string('reference');
             $table->string('description');
             $table->string('MerchantRequestID')->unique();
-            $table->string('CheckoiutRequestID')->unique();
+            $table->string('CheckoutRequestID')->unique();
             $table->string('status'); // Requested, paid, failed
+            $table->string('MpesaReceiptNumber')->unique()->nullable();
+            $table->text('ResultDescription')->nullable();
+            $table->string('TransactionDate')->nullable();
             $table->timestamps();
         });
     }
