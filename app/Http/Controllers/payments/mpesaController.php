@@ -192,7 +192,7 @@ class mpesaController extends Controller
         if($responseCode == 0) {
             $MerchantRequestID = $responseData->MerchantRequestID;
             $CheckoutRequestID = $responseData->CheckoutRequestID;
-            $customeMessage = $responseData->CustomerMessage;
+            $customerMessage = $responseData->CustomerMessage;
 
             // Save the responseto the database
 
@@ -207,7 +207,7 @@ class mpesaController extends Controller
             $payment->status = 'Requested';
             $payment->save();
 
-            return $customeMessage;
+            return $customerMessage;
 
         }
 
