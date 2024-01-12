@@ -39,7 +39,7 @@ class mpesaController extends Controller
 
     public function registerURL()
     {
-        Log::info('The log is working from my application');
+        Log::info('The the register URL endpoint was hit by the user');
         $body = array(
             'ShortCode' => 600992,
             'ResponseType' => 'Completed',
@@ -266,13 +266,5 @@ class mpesaController extends Controller
         curl_close($curl);
 
         return $curl_response;
-    }
-    public function pay()
-    {
-        return view('pay');
-    }
-    public function query()
-    {
-        return view('query');
     }
 }

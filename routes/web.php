@@ -15,11 +15,6 @@ use App\Http\Controllers\payments\mpesaResponsesController;
 |
 */
 
-// Route::get('/v2/query/transaction', [mpesaController::class, 'queryTransaction']);
-// Route::get('/v1/access/token', [mpesaController::class, 'generateAccessToken']);
-// Route::post('/v1/stkpush', [mpesaController::class, 'stkPush']);
-Route::get('/pay', [mpesaController::class, 'pay']);
-// Route::get('/query/transaction', [mpesaController::class, 'query']);
 Route::post('/get-token', [mpesaController::class,'getAccessToken']);
 Route::post('/register-urls', [mpesaController::class,'registerURL']);
 Route::post('/simulate-transaction', [mpesaController::class,'simulateTransaction']);
@@ -27,6 +22,10 @@ Route::post('/simulate-b2c', [mpesaController::class,'b2cRequest']);
 Route::post('/simulate-stk', [mpesaController::class,'stkPush']);
 Route::post('/reverse-transaction', [mpesaController::class,'reverseTransaction']);
 Route::post('/transaction-status', [mpesaController::class,'checkTransactionStatus']);
+
+Route::get('/', function(){
+    return view('pay');
+});
 
 Route::get('/b2c/request/pay', function(){
     return view('b2c');
@@ -40,8 +39,6 @@ Route::get('/c2b/reversal', function(){
 Route::get('/c2b/transaction-status', function(){
     return view('status');
 });
-
-
 
 
 Route::post('/mobilemoney-payment-gateway/b2cresult', [mpesaResponsesController::class,'b2cCallback']);
