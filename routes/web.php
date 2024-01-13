@@ -44,7 +44,7 @@ Route::get('/c2b/transaction-status', function(){
 Route::post('/mobilemoney-payment-gateway/b2cresult', [mpesaResponsesController::class,'b2cCallback']);
 Route::post('/mobilemoney-payment-gateway/validation', [mpesaResponsesController::class,'validation']);
 Route::post('/mobilemoney-payment-gateway/confirmation', [mpesaResponsesController::class,'confirmation']);
-Route::post('/mobilemoney-payment-gateway/stk', [mpesaResponsesController::class,'stkResponse']);
+Route::post('/mobilemoney-payment-gateway/stk', [mpesaController::class,'stkResponse']);
 Route::post('/mobilemoney-payment-gateway/Reversal/result', [mpesaResponsesController::class,'reversalResponseResult']);
 Route::post('/mobilemoney-payment-gateway/TransactionStatus/result', [mpesaResponsesController::class,'statusResponseResult']);
 

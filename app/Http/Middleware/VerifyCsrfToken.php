@@ -13,5 +13,6 @@ class VerifyCsrfToken extends Middleware
      */
     protected $except = [
         //
+        // 'https://076a-41-209-10-84.ngrok-free.app/mobilemoney-payment-gateway/stk',
     ];
 }
