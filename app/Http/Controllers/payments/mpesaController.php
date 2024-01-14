@@ -185,14 +185,14 @@ class mpesaController extends Controller
 
         $response = $this->makeHttp($url, $curl_post_data);
 
-        $responseData = json_decode($response);
+        $responseData = json_decode($response, true);
 
-        $responseCode = $responseData->responseCode;
+        $responseCode = $responseData['ResponseCode'];
 
         if($responseCode == 0) {
-            $MerchantRequestID = $responseData->MerchantRequestID;
-            $CheckoutRequestID = $responseData->CheckoutRequestID;
-            $customerMessage = $responseData->CustomerMessage;
+            $MerchantRequestID = $responseData['MerchantRequestID'];
+            $CheckoutRequestID = $responseData['CheckoutRequestID'];
+            $customerMessage = $responseData['CustomerMessage'];
 
             // Save the responseto the database
 
@@ -207,10 +207,9 @@ class mpesaController extends Controller
             $payment->status = 'Requested';
             $payment->save();
 
-            return $customerMessage;
-
         }
 
+        return $response;
 
     }
 

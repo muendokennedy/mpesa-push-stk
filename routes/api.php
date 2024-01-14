@@ -16,9 +16,9 @@ use App\Http\Controllers\payments\mpesaResponsesController;
 |
 */
 
-// Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-//     return $request->user();
-// });
+Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+    return $request->user();
+});
 
 // Create some api routes for the confirmation and the validation URLs
 
