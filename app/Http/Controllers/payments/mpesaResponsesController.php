@@ -51,9 +51,6 @@ class mpesaResponsesController extends Controller
     }
     public function stkResponse()
     {
-
-        Log::info('This endpoint was hit from safaricom');
-
         $data = file_get_contents('php://input');
 
         Storage::disk('local')->put('stk.txt', $data);

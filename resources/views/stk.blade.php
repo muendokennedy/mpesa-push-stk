@@ -52,12 +52,12 @@
 
             xhrHttp.onreadystatechange = function(){
                 if(xhrHttp.readyState === 4 && xhrHttp.status === 200){
-                     let response = JSON.parse(xhrHttp.responseText);
-                      if(response.ResponseCode == '0'){
-                          document.getElementById('transaction-status').textContent = `${response.ResponseDescription} and ${response.CustomerMessage}`;
-                      } else {
-                          document.getElementById('transaction-status').textContent = response.errorMessage;
-                      }
+                    let response = JSON.parse(xhrHttp.responseText);
+                     if(response.ResponseCode == '0'){
+                         document.getElementById('transaction-status').textContent = `${response.ResponseDescription} and ${response.CustomerMessage}`;
+                     } else {
+                         document.getElementById('transaction-status').textContent = response.errorMessage;
+                     }
                     console.log(xhrHttp.responseText);
                 } else {
                     console.log('There was an error while making the request');

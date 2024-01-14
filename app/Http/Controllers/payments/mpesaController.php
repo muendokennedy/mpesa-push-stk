@@ -2,14 +2,12 @@
 
 namespace App\Http\Controllers\payments;
 
-use Carbon\Carbon;
 use App\Models\Stkcallback;
+use Carbon\Carbon;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Storage;
 
 class mpesaController extends Controller
 {
@@ -22,29 +20,22 @@ class mpesaController extends Controller
 
         : 'https://api.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials';
 
-        // $curl = curl_init($url);
+        $curl = curl_init($url);
 
-        // curl_setopt_array($curl,
-        //     array(
-        //         CURLOPT_HTTPHEADER => ['Content-Type: application/json; charset=utf8'],
-        //         CURLOPT_RETURNTRANSFER => true,
-        //         CURLOPT_HEADER => false,
-        //         CURLOPT_USERPWD => env('MPESA_CONSUMER_KEY') . ':' . env('MPESA_CONSUMER_SECRET')
-        //     )
-        // );
+        curl_setopt_array($curl,
+            array(
+                CURLOPT_HTTPHEADER => ['Content-Type: application/json; charset=utf8'],
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_HEADER => false,
+                CURLOPT_USERPWD => env('MPESA_CONSUMER_KEY') . ':' . env('MPESA_CONSUMER_SECRET')
+            )
+        );
 
-        // $response = json_decode(curl_exec($curl));
+        $response = json_decode(curl_exec($curl));
 
-        // curl_close($curl);
+        curl_close($curl);
 
-        // return $response->access_token;
-
-        $response = Http::withBasicAuth(env('MPESA_CONSUMER_KEY'), env('MPESA_CONSUMER_SECRET'))->get($url);
-
-        $data = json_decode($response);
-
-        return $data->access_token;
-
+        return $response->access_token;
     }
 
     public function registerURL()
@@ -172,31 +163,7 @@ class mpesaController extends Controller
 
         $password = base64_encode(env('MPESA_STK_SHORTCODE') . env('MPESA_PASSKEY') . $timestamp);
 
-        // $curl_post_data = array(
-        //     'BusinessShortCode' => env('MPESA_STK_SHORTCODE'),
-        //     'Password' => $password,
-        //     'Timestamp' => $timestamp,
-        //     'TransactionType' => "CustomerPayBillOnline",
-        //     'Amount' => $transactionData['amount'],
-        //     'PartyA' => $transactionData['phone'],
-        //     'PartyB' => env('MPESA_STK_SHORTCODE'),
-        //     'PhoneNumber' => $transactionData['phone'],
-        //     'CallBackURL' => env('MPESA_TEST_URL') . '/mobilemoney-payment-gateway/stk',
-        //     'AccountReference' => env('MPESA_B2C_INITIATOR'),
-        //     'TransactionDesc' => 'Payment of purchased prouducts'
-        // );
-
-        $url = env('MPESA_ENV') == 0
-
-        ? 'https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest'
-
-        : 'https://api.safaricom.co.ke/mpesa/stkpush/v1/processrequest';
-
-        // $response = $this->makeHttp($url, $curl_post_data);
-
-        $response = Http::withToken($this->getAccessToken())->post(
-            $url,
-            [
+        $curl_post_data = array(
             'BusinessShortCode' => env('MPESA_STK_SHORTCODE'),
             'Password' => $password,
             'Timestamp' => $timestamp,
@@ -208,19 +175,24 @@ class mpesaController extends Controller
             'CallBackURL' => env('MPESA_TEST_URL') . '/mobilemoney-payment-gateway/stk',
             'AccountReference' => env('MPESA_B2C_INITIATOR'),
             'TransactionDesc' => 'Payment of purchased prouducts'
-
-            ]
         );
 
-        $responseData = json_decode($response, true);
+        $url = env('MPESA_ENV') == 0
 
+        ? 'https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest'
 
-        $responseCode = $responseData['ResponseCode'];
+        : 'https://api.safaricom.co.ke/mpesa/stkpush/v1/processrequest';
+
+        $response = $this->makeHttp($url, $curl_post_data);
+
+        $responseData = json_decode($response);
+
+        $responseCode = $responseData->responseCode;
 
         if($responseCode == 0) {
-            $MerchantRequestID = $responseData['MerchantRequestID'];
-            $CheckoutRequestID = $responseData['CheckoutRequestID'];
-            $customerMessage = $responseData['CustomerMessage'];
+            $MerchantRequestID = $responseData->MerchantRequestID;
+            $CheckoutRequestID = $responseData->CheckoutRequestID;
+            $customerMessage = $responseData->CustomerMessage;
 
             // Save the responseto the database
 
@@ -234,9 +206,12 @@ class mpesaController extends Controller
             $payment->CheckoutRequestID = $CheckoutRequestID;
             $payment->status = 'Requested';
             $payment->save();
+
+            return $customerMessage;
+
         }
 
-        return $response;
+
     }
 
     public function checkTransactionStatus(Request $request)
@@ -321,51 +296,4 @@ class mpesaController extends Controller
 
         return $curl_response;
     }
-
-    public function stkResponse()
-    {
-
-        Log::info('This endpoint was hit from safaricom');
-
-        $data = file_get_contents('php://input');
-
-        Storage::disk('local')->put('stk.txt', $data);
-
-        $response = json_decode($data);
-
-        $resultCode = $response->Body->stkCallback->ResultCode;
-
-        $CheckoutRequestID = $response->Body->stkCallback->CheckoutRequestID;
-
-        $ResultDescription = $response->Body->stkCallback->ResultDesc;
-
-        if($resultCode == 0){
-            $MerchantRequestID = $response->Body->stkCallback->MerchantRequestID;
-            $Amount = $response->Body->stkCallback->CallbackMetadata->Item[0]->Value;
-            $MpesaReceiptNumber = $response->Body->stkCallback->CallbackMetadata->Item[1]->Value;
-            // $Balance = $response->Body->stkCallback->CallbackMetadata->Item[2]->Value;
-            $TransactionDate = $response->Body->stkCallback->CallbackMetadata->Item[3]->Value;
-            $Phone = $response->Body->stkCallback->CallbackMetadata->Item[4]->Value;
-
-            $payment = Stkcallback::where('CheckoutRequestID', $CheckoutRequestID)->firstOrfail();
-
-            $payment->status = 'Paid';
-            $payment->TransactionDate = $TransactionDate;
-            $payment->MpesaReceiptNumber = $MpesaReceiptNumber;
-            $payment->ResultDescription = $ResultDescription;
-            $payment->save();
-        } else {
-
-            $payment = Stkcallback::where('CheckoutRequestID', $CheckoutRequestID)->firstOrfail();
-
-            $payment->ResultDescription = $ResultDescription;
-            $payment->status = 'Failed';
-            $payment->save();
-        }
-
-
-    }
-
 }
-
-

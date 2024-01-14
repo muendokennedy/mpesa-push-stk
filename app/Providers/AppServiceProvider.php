@@ -20,8 +20,8 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         //Put this secure url when on production
-        // if(env('APP_ENV') == 'production'){
+        if(env('APP_ENV') == 'production'){
             \URL::forceScheme('https');
-        // }
+        }
     }
 }

@@ -64,11 +64,7 @@
                 }
             };
 
-            console.log('This code was executed successfully');
-
             xhrHttp.send();
-
-
 
         });
 
