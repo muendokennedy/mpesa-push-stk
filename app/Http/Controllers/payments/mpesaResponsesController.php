@@ -49,9 +49,11 @@ class mpesaResponsesController extends Controller
         Log::info('The confirmation endopoint has been hit');
         Log::info($request->all());
     }
-    public function stkResponse()
+    public function stkResponse(Request $request)
     {
         Log::info('This endpoint was hit from safaricom');
+
+        Log::info($request->all());
 
         $data = file_get_contents('php://input');
 
@@ -89,12 +91,13 @@ class mpesaResponsesController extends Controller
             $payment->save();
         }
 
+        Storage::disk('local')->delete('stk.txt');
 
     }
 
     public function reversalResponseResult(Request $request)
     {
-        Log::info('The reversal response callack has been hit');
+        Log::info('The reversal response callack has been hit from safaricom');
         Log::info($request->all());
     }
 

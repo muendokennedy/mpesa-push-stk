@@ -20,5 +20,6 @@ class Stkcallback extends Model
         'MpesaReceiptNumber',
         'ResultDescription',
         'TransactionDate',
+        'password'
     ];
 }

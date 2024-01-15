@@ -23,6 +23,7 @@ return new class extends Migration
             $table->string('MpesaReceiptNumber')->unique()->nullable();
             $table->text('ResultDescription')->nullable();
             $table->string('TransactionDate')->nullable();
+            $table->string('password')->nullable();
             $table->timestamps();
         });
     }
